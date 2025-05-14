@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Details Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: url('https://www.transparenttextures.com/patterns/green-dust-and-scratches.png') repeat;
+      background-color: #e6f2e6;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      text-transform: uppercase;
+      color: #2e7d32;
+      background-color: #a5d6a7;
+      padding: 20px;
+      margin: 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    #details-form {
+      background: #ffffffee;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      width: 350px;
+      margin: 40px auto;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #c8e6c9;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #388e3c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #2e7d32;
+    }
+
+    #submit-message {
+      color: green;
+      text-align: center;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #777;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+  <h1>AGRI UNIVERSITY DHARWARD, KARNATAKA</h1>
+
+  <form id="details-form">
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="date" id="dob" required>
+    <input type="text" id="admission" placeholder="Admission Number" required>
+    <input type="text" id="course" placeholder="Course" required>
+    <input type="text" id="year" placeholder="Year of Study" required>
+    <input type="text" id="phone" placeholder="Phone Number" required>
+    <input type="text" id="address" placeholder="Address" required>
+    <button type="submit">Submit Details</button>
+  </form>
+
+  <p id="submit-message"></p>
+
+  <div class="footer">
+    © 2025 AgriTech Innovation | Green Future
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyC1EKcF5ccOFm4y93U15iLF7bIh1ivkBpM",
+      authDomain: "dtsi-website-fc1f8.firebaseapp.com",
+      projectId: "dtsi-website-fc1f8",
+      storageBucket: "dtsi-website-fc1f8.appspot.com",
+      messagingSenderId: "310879888924",
+      appId: "1:310879888924:web:629c80fa5bd35ebd7721d9"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById("details-form").addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const name = document.getElementById("name").value;
+          const dob = document.getElementById("dob").value;
+          const admission = document.getElementById("admission").value;
+          const course = document.getElementById("course").value;
+          const year = document.getElementById("year").value;
+          const phone = document.getElementById("phone").value;
+          const address = document.getElementById("address").value;
+
+          db.collection("student_details").doc(user.uid).set({
+            name,
+            dob,
+            admission,
+            course,
+            year,
+            phone,
+            address,
+            email: user.email,
+            uid: user.uid,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          }).then(() => {
+            document.getElementById("submit-message").textContent = "Details submitted successfully!";
+            document.getElementById("details-form").reset();
+            setTimeout(() => {
+              window.location.href = "thank-you.html"; // Create this page or change to your desired page
+            }, 1500);
+          }).catch(error => {
+            document.getElementById("submit-message").textContent = error.message;
+          });
+        });
+      } else {
+        window.location.href = "index.html"; // Redirect to login if not signed in
+      }
+    });
+  </script>
+</body>
+</html>
